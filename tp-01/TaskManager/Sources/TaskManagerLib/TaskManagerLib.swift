@@ -1,4 +1,4 @@
-//SARDINHA Patrick
+// SARDINHA Patrick
 import PetriKit
 
 public func createTaskManager() -> PTNet {
@@ -41,11 +41,11 @@ public func createCorrectTaskManager() -> PTNet {
     let taskPool    = PTPlace(named: "taskPool")
     let processPool = PTPlace(named: "processPool")
     let inProgress  = PTPlace(named: "inProgress")
-    // Creation de la nouvelle place permettant d'obtenir un systeme valide
+    // Creation de la nouvelle place permettant d'obtenir un systeme valide, qui
     // limite le nombre de processus pour une meme tache
     let compt       = PTPlace(named: "compt")
 
-    // Transitions + mise a jour
+    // Transitions + mise a jour des postconditions et preconditions
     let create      = PTTransition(
         named          : "create",
         preconditions  : [],
@@ -69,6 +69,7 @@ public func createCorrectTaskManager() -> PTNet {
 
 
     // P/T-net
+    // Ajout de la nouvelle place
     return PTNet(
         places: [taskPool, processPool, inProgress, compt],
         transitions: [create, spawn, success, exec, fail])
