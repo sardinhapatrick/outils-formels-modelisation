@@ -1,0 +1,57 @@
+digraph G {
+subgraph place {
+node [shape=circle, width=.5];
+"w2" [label="1", xlabel="w2"];
+"s3" [label="0", xlabel="s3"];
+"p" [label="0", xlabel="p"];
+"m" [label="0", xlabel="m"];
+"s2" [label="0", xlabel="s2"];
+"w3" [label="1", xlabel="w3"];
+"r" [label="1", xlabel="r"];
+"t" [label="0", xlabel="t"];
+"s1" [label="0", xlabel="s1"];
+"w1" [label="1", xlabel="w1"];
+}
+subgraph transitions {
+node [shape=rect, width=.5, height=.5];
+"tw1";
+"tpm";
+"ttm";
+"tw3";
+"tw2";
+"ts2";
+"ts1";
+"tpt";
+"ts3";
+}
+"s1" -> "tw1";
+"tw1" -> "w1";
+"r" -> "tpm";
+"tpm" -> "m";
+"tpm" -> "p";
+"r" -> "ttm";
+"ttm" -> "m";
+"ttm" -> "t";
+"s3" -> "tw3";
+"tw3" -> "w3";
+"s2" -> "tw2";
+"tw2" -> "w2";
+"m" -> "ts2";
+"w2" -> "ts2";
+"p" -> "ts2";
+"ts2" -> "r";
+"ts2" -> "s2";
+"w1" -> "ts1";
+"t" -> "ts1";
+"p" -> "ts1";
+"ts1" -> "s1";
+"ts1" -> "r";
+"r" -> "tpt";
+"tpt" -> "t";
+"tpt" -> "p";
+"w3" -> "ts3";
+"m" -> "ts3";
+"t" -> "ts3";
+"ts3" -> "r";
+"ts3" -> "s3";
+}
