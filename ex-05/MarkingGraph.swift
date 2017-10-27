@@ -1,16 +1,25 @@
+<<<<<<< HEAD
 // cette class définie un noeud du graphe.
+=======
+>>>>>>> 90132b5e5bad46d14f2ad8c5a40be0fe8ce3fbab
 public class MarkingGraph {
 
     public typealias Marking = [String: Int]
 
+<<<<<<< HEAD
     public let marking   : Marking // dans graphe de marquage correspond au marquage du noeud.
     public var successors: [String: MarkingGraph] // correspond aux arcs sortants des noeuds. (dictionnaire)
+=======
+    public let marking   : Marking
+    public var successors: [String: MarkingGraph]
+>>>>>>> 90132b5e5bad46d14f2ad8c5a40be0fe8ce3fbab
 
     public init(marking: Marking, successors: [String: MarkingGraph] = [:]) {
         self.marking    = marking
         self.successors = successors
     }
 
+<<<<<<< HEAD
 
 }
 // parcours de graphe en profondeur.
@@ -43,11 +52,16 @@ func countNodes2(markingGraph: MarkingGraph{, seen: inout [markingGraph]) -> Int
         }
     }
     return seen.count
+=======
+>>>>>>> 90132b5e5bad46d14f2ad8c5a40be0fe8ce3fbab
 }
 
 // Ex. 1: Mutual exclusion
 do {
+<<<<<<< HEAD
     // Write your code here ...
+=======
+>>>>>>> 90132b5e5bad46d14f2ad8c5a40be0fe8ce3fbab
     let m0 = MarkingGraph(marking: ["s0": 1, "s1": 0, "s2": 1, "s3": 0, "s4": 1])
     let m1 = MarkingGraph(marking: ["s0": 0, "s1": 1, "s2": 0, "s3": 0, "s4": 1])
     let m2 = MarkingGraph(marking: ["s0": 1, "s1": 0, "s2": 0, "s3": 1, "s4": 0])
@@ -68,7 +82,10 @@ do {
     m2.successors = ["t1": m1]
 
     // Write your code here ...
+<<<<<<< HEAD
 
+=======
+>>>>>>> 90132b5e5bad46d14f2ad8c5a40be0fe8ce3fbab
 }
 
 // Ex. 2: PetriNet 2

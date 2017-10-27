@@ -1,9 +1,14 @@
+<<<<<<< HEAD
 // SARDINHA Patrick
 // Tous droits réservés.
 
 import PetriKit
 import SmokersLib
 import Foundation
+=======
+import PetriKit
+import SmokersLib
+>>>>>>> 90132b5e5bad46d14f2ad8c5a40be0fe8ce3fbab
 
 // Instantiate the model.
 let model = createModel()
@@ -18,6 +23,7 @@ guard let r  = model.places.first(where: { $0.name == "r" }),
       let w2 = model.places.first(where: { $0.name == "w2" }),
       let s2 = model.places.first(where: { $0.name == "s2" }),
       let w3 = model.places.first(where: { $0.name == "w3" }),
+<<<<<<< HEAD
       let s3 = model.places.first(where: { $0.name == "s3" }),
 
       let tpt  = model.transitions.first(where: { $0.name == "tpt" }),
@@ -30,10 +36,14 @@ guard let r  = model.places.first(where: { $0.name == "r" }),
       let tw2  = model.transitions.first(where: { $0.name == "tw2" }),
       let tw3  = model.transitions.first(where: { $0.name == "tw3" })
 
+=======
+      let s3 = model.places.first(where: { $0.name == "s3" })
+>>>>>>> 90132b5e5bad46d14f2ad8c5a40be0fe8ce3fbab
 else {
     fatalError("invalid model")
 }
 
+<<<<<<< HEAD
 // Nous plotons le réseau de pétri pour le visualiser en génerant un .dot
 
 let pn = PTNet(places: [r, p, t, m, w1, s1, w2, s2, w3, s3], transitions: [tpt, tpm, ttm, ts1, ts2, ts3, tw1, tw2, tw3])
@@ -161,4 +171,12 @@ if let markingGraph = model.markingGraph(from: initialMarking) {
     else {
         print("Un même ingrédient ne peut pas se retrouver deux fois en même temps sur la table !")
     }
+=======
+// Create the initial marking.
+let initialMarking: PTMarking = [r: 1, p: 0, t: 0, m: 0, w1: 1, s1: 0, w2: 1, s2: 0, w3: 1, s3: 0]
+
+// Create the marking graph (if possible).
+if let markingGraph = model.markingGraph(from: initialMarking) {
+    // Write here the code necessary to answer questions of Exercise 4.
+>>>>>>> 90132b5e5bad46d14f2ad8c5a40be0fe8ce3fbab
 }

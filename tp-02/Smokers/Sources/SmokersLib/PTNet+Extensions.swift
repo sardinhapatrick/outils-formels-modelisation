@@ -1,6 +1,9 @@
+<<<<<<< HEAD
 // SARDINHA Patrick
 // Tous droits réservés.
 
+=======
+>>>>>>> 90132b5e5bad46d14f2ad8c5a40be0fe8ce3fbab
 import PetriKit
 
 public class MarkingGraph {
@@ -17,6 +20,7 @@ public class MarkingGraph {
 
 public extension PTNet {
 
+<<<<<<< HEAD
       public func markingGraph(from marking: PTMarking) -> MarkingGraph? {
         // Write here the implementation of the marking graph generation.
 
@@ -58,4 +62,11 @@ public extension PTNet {
         }
       return Etat // On renvoit les Etats
      }
+=======
+    public func markingGraph(from marking: PTMarking) -> MarkingGraph? {
+        // Write here the implementation of the marking graph generation.
+        return nil
+    }
+
+>>>>>>> 90132b5e5bad46d14f2ad8c5a40be0fe8ce3fbab
 }
