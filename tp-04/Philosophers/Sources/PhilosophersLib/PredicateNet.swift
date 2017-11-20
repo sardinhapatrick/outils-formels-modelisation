@@ -77,7 +77,7 @@ public class PredicateTransition<T: Equatable> {
         var inboundVariables: Set<Variable> = []
 
         for arc in preconditions {
-            // Make sure the a doesn't appear twice as a precondition. -> 1 place - 1 condition
+            // Make sure the a doesn't appear twice as a precondition.
             guard !inboundPlaces.contains(arc.place) else {
                 preconditionFailure("Place '\(arc.place)' appear twice as precondition.")
             }
@@ -151,7 +151,7 @@ public class PredicateTransition<T: Equatable> {
     ///   to pick `1` once again. Now if we check the second arrangement, we'll bind `x` to `2`
     ///   and `y` to `1` before moving to `p1`. But as we won't be able to match `2` in the tokens
     ///   of `p1`, we'll reject the binding and move to the next arrangement.
-    public func fireableBingings(from marking: PredicateNet<T>.MarkingType) -> [Binding] { // -> toutes les combinaisons de binding
+    public func fireableBingings(from marking: PredicateNet<T>.MarkingType) -> [Binding] {
         // Sort the places so we always bind their variables in the same order.
         let variables    = self.inboundVariables()
         let sortedPlaces = variables.keys.sorted()
@@ -207,7 +207,7 @@ public class PredicateTransition<T: Equatable> {
     ///
     /// - Note: If the transition isn't fireable with the provided marking and binding, the method
     ///   will return a nil value.
-    public func fire(from marking: PredicateNet<T>.MarkingType, with binding: Binding) // prend un marquage et un binding
+    public func fire(from marking: PredicateNet<T>.MarkingType, with binding: Binding)
         -> PredicateNet<T>.MarkingType?
     {
         // Check whether the provided binding is valid.
@@ -225,7 +225,6 @@ public class PredicateTransition<T: Equatable> {
         for condition in self.conditions {
             guard condition(binding) else { return nil }
         }
-        //--> isFirable depuis func fire
 
         var result = marking
 
@@ -248,7 +247,7 @@ public class PredicateTransition<T: Equatable> {
                     // checked that postconditions aren't labeled with free variables.
                     result[arc.place]!.append(binding[v]!)
                 case .function(let f):
-                    result[arc.place]!.append(f(binding)) // si c'est une fonction alors on l'applle
+                    result[arc.place]!.append(f(binding))
                 }
             }
         }
@@ -333,7 +332,7 @@ public class PredicateArc<T: Equatable>: Hashable {
 
 }
 
-public indirect enum PredicateLabel<T: Equatable> { // T --> n'importe quel ens de T
+public enum PredicateLabel<T: Equatable> {
 
     case variable(Variable)
     case function((PredicateTransition<T>.Binding) -> T)
