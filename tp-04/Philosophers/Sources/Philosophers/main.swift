@@ -45,10 +45,65 @@ do {
 
 print()
 
+// Test pour 5 philosophes sans blocage:
+print("1.")
+print("Avec 5 philosophes, sans blocage:\n")
 do {
-    let philosophers = lockFreePhilosophers(n: 3)
-    // let philosophers = lockablePhilosophers(n: 3)
+    let philosophers = lockFreePhilosophers(n: 5)
     for m in philosophers.simulation(from: philosophers.initialMarking!).prefix(10) {
         print(m)
+
+    }
+    //print(philosophers.initialMarking)
+    let m1 = philosophers.markingGraph(from: philosophers.initialMarking!)
+    print("\nOn a",m1!.count,"marquages possibles !\n\n")
+
+    // Pour tester si nous avons bien aucun bloquage dans le sans blocage:
+    for block in m1! {
+      // ******************* //
+      print("Print_Test_1")        // Attention (pour 11 OK)
+      // ******************* //
+      if block.successors.count == 0{ // Si on a pas de successeurs:
+        print("\nVoici un état bloqué où le réseau est bloqué:\n")
+        print(block.marking)
+        print("Print_Test_2\n") // --> Pas de print donc aucun bloquage.
+        break // Si un blockage.
+      }
+    }
+}
+
+// Test pour 5 philosophes avec blocage:
+print("\n2.")
+print("Avec 5 philosophes, avec blocage:\n")
+do {
+    let philosophers = lockablePhilosophers(n: 5)
+    for m in philosophers.simulation(from: philosophers.initialMarking!).prefix(10) {
+        print(m)
+
+    }
+    //print(philosophers.initialMarking)
+    let m2 = philosophers.markingGraph(from: philosophers.initialMarking!)
+    print("\nOn a",m2!.count,"marquages possibles !\n\n")
+}
+
+
+// Test avec 5 philosophes avec blocage, en renvoie un état bloqué:
+print("3.")
+print("Avec 5 philosophes, avec blocage en imprimant un état de blocage:\n")
+do {
+    let philosophers = lockablePhilosophers(n: 5)
+    for m in philosophers.simulation(from: philosophers.initialMarking!).prefix(10) {
+        print(m)
+
+    }
+    //print(philosophers.initialMarking)
+    let m3 = philosophers.markingGraph(from: philosophers.initialMarking!)
+    print("\nOn a",m3!.count,"marquages possibles !")
+    for block in m3! {
+      if block.successors.count == 0{
+        print("\nVoici un état bloqué où le réseau est bloqué:\n")
+        print(block.marking)
+        break // Si un blockage.
+      }
     }
 }

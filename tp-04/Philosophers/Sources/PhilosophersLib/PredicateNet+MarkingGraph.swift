@@ -1,3 +1,5 @@
+// SARDINHA Patrick
+
 extension PredicateNet {
 
     /// Returns the marking graph of a bounded predicate net.
@@ -13,7 +15,54 @@ extension PredicateNet {
         // You may use these methods to check if you've already visited a marking, or if the model
         // is unbounded.
 
-        return nil
+        //let test = PredicateMarkingNode<T>(marking: marking, successors: [:])
+        //print(test)
+
+        let Graphe_Marquage = PredicateMarkingNode<T>(marking: marking, successors: [:]) // Nous définissons le graphe de marquage.
+        var Marquage_A_Tester = [PredicateMarkingNode<T>]() // On définit les marquages à tester.
+        Marquage_A_Tester.insert(Graphe_Marquage, at:0)
+        var Marquage_Vu = [Graphe_Marquage] // Les marquages visités.
+        var Binding_Tab = [PredicateTransition<T>.Binding]() // On déclare un tableau de bindings.
+
+        while (Marquage_A_Tester.last) != nil {  // Nous bouclons jusqu'a ce qu'il n'y ait plus de marquages à tester.
+
+        let M_tmp = Marquage_A_Tester.popLast()   // On place le dernier marquage de la liste des marquages à tester
+            Marquage_Vu.append(M_tmp!)           // dans les marquages visités.
+
+            let marquage = M_tmp!.marking
+            for Transi in self.transitions { // Nous testons les transitions une par une.
+                Binding_Tab = Transi.fireableBingings(from: marquage) // Nous regardons tous les bindings.
+                var Binding_Creer : PredicateBindingMap<T> = [:]
+
+                for i in Binding_Tab { // On teste tous les bindings.
+                    if let fireable = Transi.fire(from: marquage, with: i) { // Si une transition est tirable.
+                        let Marquage_Creer = PredicateMarkingNode<T>(marking: fireable, successors: [:]) //  Def création marquage.
+
+                        if (Marquage_Vu.contains(where: {PredicateNet.greater(Marquage_Creer.marking, $0.marking)}) == true){ // Si ce marquage à déjà été visité.
+                            return nil // Retour rien.
+                        }
+                        // else {
+                        if (Marquage_Vu.contains(where: {PredicateNet.equals($0.marking, Marquage_Creer.marking)}) == false){ // Si nous ne l'avons pas encore visité.
+                            Marquage_A_Tester.append(Marquage_Creer) // On append le marquages aux listes.
+                            Marquage_Vu.append(Marquage_Creer)
+
+                            Binding_Creer[i] = Marquage_Creer
+                            M_tmp!.successors.updateValue(Binding_Creer, forKey: Transi) // On update les successeurs possibles.
+                        }
+                        else {
+                            for block in Marquage_Vu { // On teste les marquages testés et on regarde si on revient à un marquage visité.
+                                if (PredicateNet.equals(block.marking, Marquage_Creer.marking) == true) {
+                                Binding_Creer[i] = block
+                                M_tmp!.successors.updateValue(Binding_Creer, forKey: Transi) // ALors on remet à jour les successeurs.
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // Ainsi, on renvoit le graphe de marquage.
+        return Graphe_Marquage
     }
 
     // MARK: Internals
