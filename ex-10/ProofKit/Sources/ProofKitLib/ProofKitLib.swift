@@ -1,4 +1,5 @@
 infix operator =>: LogicalDisjunctionPrecedence
+infix operator |-: AssignmentPrecedence
 
 public protocol BooleanAlgebra {
 
@@ -46,36 +47,8 @@ public enum Formula {
     /// The negation normal form of the formula.
     public var nnf: Formula {
         switch self {
-        case .proposition(_): //si c'est une proposition alors fait rien
-            return self
-        case .negation(let a): // si negation de a alors
-            switch a {
-            case .proposition(_): // si a est une proposition alors fait rien
-                return self
-            case .negation(let b): // ici negation de b
-                return b.nnf
-            case .disjunction(let b, let c):
-                return (!b).nnf && (!c).nnf
-            case .conjunction(let b, let c):
-                return (!b).nnf || (!c).nnf
-            case .implication(_):
-                return (!a.nnf).nnf // ou ()
-            }
-        case .disjunction(let b, let c):
-            return b.nnf || c.nnf
-        case .conjunction(let b, let c):
-            return b.nnf && c.nnf
-        case .implication(let b, let c):
-            return (!b).nnf || c.nnf
-        }
-    }
-
-    /// The conjunctive normal form of the formula.
-    public var cnf: Formula {
-        switch self {
         case .proposition(_):
             return self
-
         case .negation(let a):
             switch a {
             case .proposition(_):
@@ -89,93 +62,23 @@ public enum Formula {
             case .implication(_):
                 return (!a.nnf).nnf
             }
-
         case .disjunction(let b, let c):
-            switch b {
-            case .proposition(_):
-                return self
-            case .negation(let d):
-                return d.nnf
-            case .disjunction(let d, let e):
-                switch c {
-                case .proposition(_):
-                    return self
-                case .negation(let c):
-                    return c.nnf
-                case .disjunction(let f, let g):
-                    return (!f).nnf && (!g).nnf
-                case .conjunction(let f, let g):
-                    return (!f).nnf || (!g).nnf
-                case .implication(_):
-                    return (!c.nnf).nnf
-                }
-
-                //return (!d).nnf && (!e).nnf
-            case .conjunction(let d, let e):
-                switch c {
-                case .proposition(_):
-                    return (c.cnf || d.cnf) && (c.cnf || e.cnf) // pour (a && b) || c
-                case .negation(let c):
-                    return (!c.cnf || d.cnf) && (!c.cnf || e.cnf) // ok
-                case .disjunction(let f, let g):
-                    return (!f).nnf && (!g).nnf
-                case .conjunction(let f, let g):
-                    return (!f).nnf || (!g).nnf
-                case .implication(_):
-                    return (!c.nnf).nnf
-                }
-                //return (!d).nnf || (!e).nnf
-            case .implication(_):
-                return (!b.nnf).nnf
-          }
-
+            return b.nnf || c.nnf
         case .conjunction(let b, let c):
-            switch b {
-            case .proposition(_):
-                return self
-            case .negation(let d):
-                return d.nnf
-            case .disjunction(let d, let e):
-                switch c {
-                case .proposition(_):
-                    return self
-                case .negation(let d):
-                    return d.nnf
-                case .disjunction(let d, let e):
-                    return (!d).nnf && (!e).nnf
-                case .conjunction(let d, let e):
-                    return (!d).nnf || (!e).nnf
-                case .implication(_):
-                    return (!c.nnf).nnf
-              }
-            case .conjunction(let d, let e):
-                switch c {
-                case .proposition(_):
-                    return self
-                case .negation(let d):
-                    return d.nnf
-                case .disjunction(let d, let e):
-                    return (!d).nnf && (!e).nnf
-                case .conjunction(let d, let e):
-                    return (!d).nnf || (!e).nnf
-                case .implication(_):
-                    return (!c.nnf).nnf
-              }
-            case .implication(_):
-                return (!b.nnf).nnf
-            }
-
-
+            return b.nnf && c.nnf
         case .implication(let b, let c):
             return (!b).nnf || c.nnf
         }
     }
 
-        // Write your code here ...
-
-
     /// The disjunctive normal form of the formula.
     public var dnf: Formula {
+        // Write your code here ...
+        return self
+    }
+
+    /// The conjunctive normal form of the formula.
+    public var cnf: Formula {
         // Write your code here ...
         return self
     }
@@ -279,6 +182,110 @@ extension Formula: CustomStringConvertible {
         case .implication(let a, let b):
             return "(\(a) → \(b))"
         }
+    }
+
+}
+
+public struct Judgment {
+
+    public let hypotheses : Set<Formula>
+    public let conclusions: Set<Formula>
+
+    public var isProvable: Bool {
+        let Γ = self.hypotheses
+        let Δ = self.conclusions
+
+        for f in Γ {
+            switch f {
+            // Basic
+            case .proposition(_) where Δ.contains(f):
+                return true
+
+            // ¬l
+            case .negation(let a):
+                return Judgment(hypotheses: Γ - f, conclusions: Δ + a).isProvable
+
+            // ∨l
+            case .disjunction(let a, let b):
+                let lhs = Judgment(hypotheses: Γ - f + a, conclusions: Δ)
+                let rhs = Judgment(hypotheses: Γ - f + b, conclusions: Δ)
+                return lhs.isProvable && rhs.isProvable
+
+            // ∧l
+            case .conjunction(let a, let b):
+                return Judgment(hypotheses: Γ - f + a + b, conclusions: Δ).isProvable
+
+            // →l
+            case .implication(let a, let b):
+                let lhs = Judgment(hypotheses: Γ - f, conclusions: Δ + a)
+                let rhs = Judgment(hypotheses: Γ - f + b, conclusions: Δ)
+                return lhs.isProvable && rhs.isProvable
+
+            default:
+                break
+            }
+        }
+
+        for f in Δ {
+            switch f {
+            // Basic
+            case .proposition(_) where Γ.contains(f):
+                return true
+
+            // ¬r
+            case .negation(let a):
+                return Judgment(hypotheses: Γ + a, conclusions: Δ - f).isProvable
+
+            // ∨r
+            case .disjunction(let a, let b):
+                return Judgment(hypotheses: Γ, conclusions: Δ - f + a + b).isProvable
+
+            // ∧r
+            case .conjunction(let a, let b):
+                let lhs = Judgment(hypotheses: Γ, conclusions: Δ - f + a)
+                let rhs = Judgment(hypotheses: Γ, conclusions: Δ - f + b)
+                return lhs.isProvable && rhs.isProvable
+
+            // →r
+            case .implication(let a, let b):
+                return Judgment(hypotheses: Γ + a, conclusions: Δ - f + b).isProvable
+
+            default:
+                break
+            }
+        }
+
+        return false
+    }
+
+}
+
+extension Judgment: CustomStringConvertible {
+
+    public var description: String {
+        let Γ = self.hypotheses .map({ String(describing: $0) }).joined(separator: ",")
+        let Δ = self.conclusions.map({ String(describing: $0) }).joined(separator: ",")
+        return "\(Γ) ⊢ \(Δ)"
+    }
+
+}
+
+extension Set where Element == Formula {
+
+    public static func +(set: Set, formula: Formula) -> Set {
+        return set.union([formula])
+    }
+
+    public static func -(set: Set, formula: Formula) -> Set {
+        return set.filter({ $0 != formula })
+    }
+
+}
+
+extension Formula {
+
+    public static func |-(hypotheses: Formula, conclusions: Formula) -> Judgment {
+        return Judgment(hypotheses: [hypotheses], conclusions: [conclusions])
     }
 
 }

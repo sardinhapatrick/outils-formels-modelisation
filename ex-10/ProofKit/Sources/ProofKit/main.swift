@@ -2,30 +2,9 @@ import ProofKitLib
 
 let a: Formula = "a"
 let b: Formula = "b"
-
-// ----- //
 let f = a && b
+
 print(f)
-// ----- //
-
-
-// Test pour ex-09 //
-let c: Formula = "c"
-let d: Formula = "d"
-let f1 = !(a && (b || c))
-let f2 = (a => b) || !(a && c)
-let f3 = (!a || b && c) && a
-let f4 = (!a && b) || !c
-
-print("f1:")
-print("formula : \(f1)")
-print("nnf : \(f1.nnf)") // ------> Pour obtenir le NNF de f2
-print("cnf : \(f1.cnf)")
-print("TEST")
-print("nnf : \(f4.nnf)")
-print("cnf : \(f4.cnf)")
-//print("dnf : \(f1.dnf)")
-// -------------- //
 
 let booleanEvaluation = f.eval { (proposition) -> Bool in
     switch proposition {
