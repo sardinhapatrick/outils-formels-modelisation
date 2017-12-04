@@ -4,29 +4,49 @@ let a: Formula = "a"
 let b: Formula = "b"
 
 // ----- //
-let f = a && b
-print(f)
+let ftest = a && b
+print(ftest)
 // ----- //
 
 
 // Test pour ex-09 //
 let c: Formula = "c"
 let d: Formula = "d"
+let e: Formula = "e"
+let f: Formula = "f"
 let f1 = !(a && (b || c))
 let f2 = (a => b) || !(a && c)
 let f3 = (!a || b && c) && a
 let f4 = (!a && b) || !c
+let f5 = (a || (a || b)) || (c && d)
+let f6 = (a && (e && f)) || (c && d)
+let f7 = (a) || !(c && !(b && !(d && e)))
+let f8 = (a) || !(b || c)
+let f9 = (a || b) || (c && (d && e))
+let f10 = !(a) || !(b && !(c && d))
+let f11 = (a && b) || !(c && (d && e)) // a test 155
+let f12 = (a || b) || !(c && (d || e))
+let f13 = a && (c && (d || e))
+let f14 = b || !(d && a)
+let f15 = (!d) || (e || (f && a)) // 128
+let f16 = ((a || f) && b) || (c && (d && e))
+let f17 = (!d) || ((a || b) && (c || e))
+let f18 = b || (e || (f && a))
+let f19 = b || (d => e)
+let f20 = (a || (b || (c && a)))
 
 print("f1:")
 print("formula : \(f1)")
 print("nnf : \(f1.nnf)") // ------> Pour obtenir le NNF de f2
 print("cnf : \(f1.cnf)")
+
 print("TEST")
-print("nnf : \(f4.nnf)")
-print("cnf : \(f4.cnf)")
+print("formula : \(f20)")
+print("nnf : \(f20.nnf)")
+print("cnf : \(f20.cnf)")
 //print("dnf : \(f1.dnf)")
 // -------------- //
-
+/*
 let booleanEvaluation = f.eval { (proposition) -> Bool in
     switch proposition {
         case "p": return true
@@ -71,3 +91,4 @@ let fruityEvaluation = f.eval { (proposition) -> Fruit in
     }
 }
 print(fruityEvaluation)
+*/

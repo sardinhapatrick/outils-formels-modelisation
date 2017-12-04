@@ -73,105 +73,167 @@ public enum Formula {
     /// The conjunctive normal form of the formula.
     public var cnf: Formula {
         switch self {
-        case .proposition(_):
+        case .proposition(_):  // ---> OK
             return self
 
-        case .negation(let a):
+        case .negation(let a): // ---> OK
             switch a {
-            case .proposition(_):
+            case .proposition(_): // ---> OK
                 return self
-            case .negation(let b):
-                return b.nnf
-            case .disjunction(let b, let c):
-                return (!b).nnf && (!c).nnf
-            case .conjunction(let b, let c):
-                return (!b).nnf || (!c).nnf
-            case .implication(_):
-                return (!a.nnf).nnf
+            case .negation(let b): // ---> OK
+                return b.cnf
+            case .disjunction(let b, let c): // ---> OK
+                return (!b).cnf && (!c).cnf
+            case .conjunction(let b, let c): // ---> OK
+                return (!b).cnf || (!c).cnf
+            case .implication(_): // ---> OK
+                return (!a.cnf).cnf
             }
 
-        case .disjunction(let b, let c):
+        case .disjunction(let b, let c):  // ---> OK PRESQUE
             switch b {
-            case .proposition(_):
-                return self
+            case .proposition(_): // OK
+                switch c {
+                case .proposition(_):
+                    return (b.cnf || c.cnf) // self // ---> OK
+                case .negation(let d): // ---> OK
+                    /*switch d {
+                    case .proposition(_):
+                        return self
+                    case .negation(let d):
+                        return b.cnf || d.cnf
+                    case .disjunction(let d, let e):
+                        return ((b.cnf || (!d).cnf) && (b.cnf || (!e).cnf)).cnf
+                    case .conjunction(let f, let g):
+                        return (b.cnf || (!f).cnf || (!g).cnf).cnf
+                    case .implication(_): // ---> ?
+                        return (!c.cnf).cnf
+                    }*/
+                    return b.cnf || (!d).cnf
+
+                case .disjunction(let d, let e): // ---> OK
+                    return (b.cnf || d.cnf || e.cnf).cnf
+                case .conjunction(let d, let e): // ---> OK
+                    return ((b.cnf || d.cnf) && (b.cnf || e.cnf)).cnf
+                case .implication(let d, let e): // ---> ? case .implication(_):
+                    return b.cnf || (!c.cnf).cnf // INVERSE SIGNES non
+              }
             case .negation(let d):
-                return d.nnf
+                switch c {
+                case .proposition(_): // OK
+                    return ((!d).cnf || c.cnf).cnf
+                case .negation(let e): // OK
+                    return ((!d).cnf || (!e).cnf).cnf
+                case .disjunction(let e, let f): // OK
+                    return (!d).cnf || (e.cnf || f.cnf).cnf
+                    //return ((!d).cnf || (e.cnf || f.cnf).cnf) || ((!d).cnf || (e.cnf || f.cnf).cnf) PAS OK
+                case .conjunction(let e, let f): // OK
+                    return ((!d).cnf || (e.cnf).cnf) && ((!d).cnf || (f.cnf).cnf) // distribue pas
+                    //return (((!d).cnf || e.cnf) && ((!d).cnf || f.cnf)).cnf
+                case .implication(_): // ---> ?
+                    return (!c.cnf).cnf
+                    // return (((!d).cnf || (!f).cnf) || ((!d).cnf || g.cnf)).cnf
+                }
             case .disjunction(let d, let e):
                 switch c {
-                case .proposition(_):
-                    return self
-                case .negation(let c):
-                    return c.nnf
-                case .disjunction(let f, let g):
-                    return (!f).nnf && (!g).nnf
-                case .conjunction(let f, let g):
-                    return (!f).nnf || (!g).nnf
-                case .implication(_):
-                    return (!c.nnf).nnf
+                case .proposition(_): // OK
+                    return (c.cnf || d.cnf || e.cnf)
+                case .negation(let f): // NORMAELEMNT OK
+                    return ((!f).cnf || (d.cnf).cnf) || ((!f).cnf || (e.cnf).cnf)
+                case .disjunction(let f, let g): // OK
+                    return (d.cnf || e.cnf || f.cnf || g.cnf).cnf
+                case .conjunction(let f, let g): // NORMAELEMNT OK
+                    return ((d.cnf || e.cnf || f.cnf) && (d.cnf || e.cnf || g.cnf)).cnf
+                case .implication(_): // ----> ?
+                    return (!c.cnf).cnf
+                    //(!d).cnf && (!e).cnf && f.cnf && (!g).cnf
+                    // e.cnf || d.cnf || (!f).cnf || g.cnf
                 }
 
-                //return (!d).nnf && (!e).nnf
-            case .conjunction(let d, let e):
+            case .conjunction(let d, let e): // mettre des .cnf
                 switch c {
                 case .proposition(_):
-                    return (c.cnf || d.cnf) && (c.cnf || e.cnf) // pour (a && b) || c
-                case .negation(let c):
-                    return (!c.cnf || d.cnf) && (!c.cnf || e.cnf) // ok
-                case .disjunction(let f, let g):
-                    return (!f).nnf && (!g).nnf
-                case .conjunction(let f, let g):
-                    return (!f).nnf || (!g).nnf
-                case .implication(_):
-                    return (!c.nnf).nnf
+                    return ((c.cnf || d.cnf).cnf && (c.cnf || e.cnf).cnf).cnf // OK
+                case .negation(let f): // OKKKKKKKKKKK
+                    return ((!f).cnf || (d.cnf).cnf) && ((!f).cnf || (e.cnf).cnf)
+                case .disjunction(let f, let g): // OK
+                    return ((f.cnf || g.cnf || d.cnf) && (f.cnf || g.cnf || e.cnf)).cnf
+                case .conjunction(let f, let g): // OK NICE
+                    return ((d.cnf || f.cnf).cnf && (e.cnf || f.cnf).cnf && (d.cnf || g.cnf).cnf && (e.cnf || g.cnf).cnf).cnf // ?
+                case .implication(_): // ---> ?
+                    return (!c.cnf).cnf
                 }
-                //return (!d).nnf || (!e).nnf
-            case .implication(_):
-                return (!b.nnf).nnf
+
+            case .implication(_): // ---> ? SWITCH
+                return (!b.cnf).cnf
           }
 
-        case .conjunction(let b, let c):
+        case .conjunction(let b, let c):  // ---> X
             switch b {
             case .proposition(_):
-                return self
+                switch c {
+                case .proposition(_): // OK
+                    return (b.cnf && c.cnf)
+                case .negation(let d):
+                    return b.cnf && (!d).cnf // WTF f14
+                case .disjunction(let d, let e):
+                    return ((b.cnf && d.cnf) || (b.cnf && e.cnf)).cnf // Ok ?
+                case .conjunction(let d, let e):
+                    return (b.cnf && d.cnf && e.cnf).cnf // OK?
+                case .implication(_): // ---> ?
+                    return (!c.cnf).cnf
+                    // return (b.cnf && (!d.cnf || e.cnf)).cnf
+            }
             case .negation(let d):
-                return d.nnf
+                switch c {
+                case .proposition(_): // OK
+                    return ((!d).cnf && c.cnf).cnf
+                case .negation(let e): // OK?? .cnf
+                    return ((!d).cnf && (!e).cnf)
+                case .disjunction(let e, let f): // ??
+                    //return ((!d).cnf || e.cnf || f.cnf).cnf
+                    return (!d).cnf && (c.cnf)
+                case .conjunction(let e, let f): // PAS OK
+                    return (((!d).cnf && e.cnf) && ((!d).cnf || f.cnf)).cnf
+                case .implication(_): // ---> ?
+                    return (!c.cnf).cnf
+                  // return (((!d).cnf || (!f).cnf) || ((!d).cnf || g.cnf)).cnf
+                }
             case .disjunction(let d, let e):
                 switch c {
-                case .proposition(_):
-                    return self
-                case .negation(let d):
-                    return d.nnf
-                case .disjunction(let d, let e):
-                    return (!d).nnf && (!e).nnf
-                case .conjunction(let d, let e):
-                    return (!d).nnf || (!e).nnf
-                case .implication(_):
-                    return (!c.nnf).nnf
+                case .proposition(_): // OK PRENDRE CAAAA C'EST BONNNNN
+                    return c.cnf && (d.cnf || e.cnf).cnf
+                case .negation(let f): // OKKK
+                    return (!f).cnf && (d.cnf || e.cnf).cnf
+                case .disjunction(let f, let g): // Ok
+                    return (d.cnf || e.cnf).cnf && (f.cnf || g.cnf).cnf
+                case .conjunction(let f, let g): // OK
+                    return ((d.cnf || e.cnf) && f.cnf && g.cnf).cnf
+                case .implication(_): // X
+                    return (!c.cnf).cnf
               }
             case .conjunction(let d, let e):
                 switch c {
-                case .proposition(_):
-                    return self
-                case .negation(let d):
-                    return d.nnf
-                case .disjunction(let d, let e):
-                    return (!d).nnf && (!e).nnf
-                case .conjunction(let d, let e):
-                    return (!d).nnf || (!e).nnf
-                case .implication(_):
-                    return (!c.nnf).nnf
+                case .proposition(_): // OKKKK ---> PAS FAIRE SUR C
+                    return c.cnf && (d.cnf && e.cnf).cnf
+                case .negation(let f): // OK ?
+                    return (!f.cnf && d.cnf && e.cnf).cnf
+                case .disjunction(let f, let g): // X ?? test
+                    return (d.cnf && e.cnf).cnf && (f.cnf || g.cnf).cnf
+                case .conjunction(let f, let g): // OK
+                    return (d.cnf && e.cnf && f.cnf && g.cnf).cnf
+                case .implication(_): // --
+                    return (!c.cnf).cnf
+
               }
             case .implication(_):
-                return (!b.nnf).nnf
+                return (!b.cnf).cnf
             }
 
-
-        case .implication(let b, let c):
-            return (!b).nnf || c.nnf
+        case .implication(let b, let c):  // ---> OK
+            return (!b).cnf || c.cnf
         }
     }
-
-        // Write your code here ...
 
 
     /// The disjunctive normal form of the formula.
